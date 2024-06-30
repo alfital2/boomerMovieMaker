@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const textValidation = document.getElementById('text-validation');
 
   const backendURL = "https://boomermoviemaker-backend.onrender.com"
+  //const backendURL = "http://localhost:3000"
+
   textInput.addEventListener('input', () => {
     const value = textInput.value;
     const hebrewRegex = /^[\u0590-\u05FF\s0-9!@#$%^&*,'()_+-=]*$/;
