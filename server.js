@@ -24,6 +24,7 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/outputs', express.static(path.join(__dirname, 'public/outputs')));
 
 const songs = ['מלאכי השלום', 'ביבי המלך', 'עם ישראל חי', 'התקווה', 'מזרחי טיפוסי', 'שבוע טוב'];
 const backgrounds = ['שקיעה', 'חיילים', 'כותל', 'שבת שלום', 'פרחים'];
@@ -111,7 +112,7 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     })
     .on('end', () => {
       console.log('Video processing finished!');
-      res.json({ videoUrl: `outputs/${outputFileName}`, status: 'complete' });
+      res.json({ videoUrl: `/outputs/${outputFileName}`, status: 'complete' });
       images.forEach(image => fs.unlinkSync(image.path));
     })
     .on('error', (err) => {
@@ -121,6 +122,7 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     })
     .save(outputPath);
 });
+
 
 function getAnimationFilter(animation, index) {
   let segmentDuration = movieDuration;
