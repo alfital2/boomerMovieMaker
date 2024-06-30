@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const textInput = document.getElementById('text');
   const textValidation = document.getElementById('text-validation');
 
+  const backendURL = "https://boomermoviemaker-backend.onrender.com"
   textInput.addEventListener('input', () => {
     const value = textInput.value;
     const hebrewRegex = /^[\u0590-\u05FF\s0-9!@#$%^&*,'()_+-=]*$/;
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   resultDiv.style.display = 'none';
   loadingDiv.style.display = 'none';
 
-  fetch('http://127.0.0.1:3000/options')
+  fetch(`${backendURL}/options`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       console.log('Sending request to create video...');
-      const response = await fetch('http://127.0.0.1:3000/create-video', {
+      const response = await fetch(`${backendURL}/create-video`, {
         method: 'POST',
         body: formData
       });
