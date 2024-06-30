@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const textInput = document.getElementById('text');
   const textValidation = document.getElementById('text-validation');
 
-  const backendURL = "https://boomermoviemaker-backend.onrender.com"
-  //const backendURL = "http://localhost:3000"
+  //const backendURL = "https://boomermoviemaker-backend.onrender.com"
+  const backendURL = "http://localhost:3000"
 
   textInput.addEventListener('input', () => {
     const value = textInput.value;
