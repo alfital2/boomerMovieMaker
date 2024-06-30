@@ -17,7 +17,7 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
-const movieDuration = 30;
+const movieDuration = 15;
 const user_animation_duration = movieDuration / 2;
 
 app.use(cors());
