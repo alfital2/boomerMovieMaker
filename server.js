@@ -7,12 +7,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 
-const fadeAnimation = require('./animations/fade');
-const rotateAnimation = require('./animations/rotate');
-const zoomAnimation = require('./animations/zoom');
-const slideAnimation = require('./animations/slide');
-const bounceAnimation = require('./animations/bounce');
-
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const app = express();
@@ -122,7 +116,6 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     })
     .save(outputPath);
 });
-
 
 function getAnimationFilter(animation, index) {
   let segmentDuration = movieDuration;
