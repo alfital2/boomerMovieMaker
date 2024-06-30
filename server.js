@@ -1,11 +1,11 @@
-const path = require('path');
-const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
+const path = require('path');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 const fadeAnimation = require('./animations/fade');
 const rotateAnimation = require('./animations/rotate');
@@ -99,6 +99,10 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     .videoCodec('libx264')
     .audioCodec('aac')
     .outputOptions('-pix_fmt', 'yuv420p')
+    .outputOptions('-b:v', '500k') // Set video bitrate to 500k
+    .outputOptions('-maxrate', '500k') // Max video bitrate
+    .outputOptions('-bufsize', '1000k') // Buffer size
+    .outputOptions('-b:a', '128k') // Set audio bitrate to 128k
     .fps(30)
     .duration(movieDuration)
     .on('start', (commandLine) => {
