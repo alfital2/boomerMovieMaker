@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (result.status === 'complete') {
         console.log('Video created:', result);
-        downloadLink.href = result.videoUrl;
+        downloadLink.href = `${backendURL}/${result.videoUrl}`
         resultDiv.style.display = 'block';
         console.log('Result displayed');
       } else {
