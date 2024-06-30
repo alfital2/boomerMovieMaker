@@ -1,11 +1,11 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
-const path = require('path');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 
 const fadeAnimation = require('./animations/fade');
 const rotateAnimation = require('./animations/rotate');
@@ -50,8 +50,13 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
 
   console.log('Received request:', { song, animation, background, imageCount: images.length, text });
 
+  const outputDir = path.join(__dirname, 'public/outputs');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
   const outputFileName = `output_${Date.now()}.mp4`;
-  const outputPath = path.join(__dirname, 'public/outputs', outputFileName);
+  const outputPath = path.join(outputDir, outputFileName);
 
   let command = ffmpeg();
 
