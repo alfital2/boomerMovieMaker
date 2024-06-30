@@ -70,24 +70,21 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
   command = command.input(path.join(__dirname, 'public', 'test.png')); // Adding the new image
 
   let filterComplex = [];
-  filterComplex.push('[0:v]scale=1280:720[bg]');
+  filterComplex.push('[0:v]scale=640:360[bg]');
 
   images.forEach((_, index) => {
     const animationFilter = getAnimationFilter(animation, index);
     console.log(`Animation filter for image ${index}:`, animationFilter);
-    filterComplex.push(`[${index + 1}:v]scale=640:360[img${index}]`);
+    filterComplex.push(`[${index + 1}:v]scale=320:180[img${index}]`);
     filterComplex.push(animationFilter);
   });
-
-  // Overlay the new image in the top-right corner
-  // filterComplex.push(`[bg][${images.length + 2}:v]overlay=x=(main_w-overlay_w-10):y=10[bg]`);
 
   // Handle Hebrew text
   const fontPath = path.join(__dirname, 'public', 'ktav.otf'); // Ensure this path is correct
   const hebrewText = text; // Ensure the text is properly encoded
   const reversedText = hebrewText.split('').reverse().join('');
 
-  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${reversedText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=50:fontcolor=red:fontsize=100:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
+  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${reversedText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=20:fontcolor=red:fontsize=70:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
 
   const filterComplexString = filterComplex.join(';');
   console.log('Filter complex:', filterComplexString);
@@ -102,8 +99,10 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     .outputOptions('-b:v', '500k') // Set video bitrate to 500k
     .outputOptions('-maxrate', '500k') // Max video bitrate
     .outputOptions('-bufsize', '1000k') // Buffer size
-    .outputOptions('-b:a', '128k') // Set audio bitrate to 128k
-    .fps(30)
+    .outputOptions('-b:a', '64k') // Set audio bitrate to 64k
+    .outputOptions('-ac', '1') // Set audio channel to mono
+    .fps(15) // Reduce frame rate to 15 fps
+    .outputOptions('-preset', 'ultrafast') // Set FFmpeg preset to ultrafast
     .duration(movieDuration)
     .on('start', (commandLine) => {
       console.log('FFmpeg command:', commandLine);
