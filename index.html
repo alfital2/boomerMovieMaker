@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>boomer movie maker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>בומר מובי מייקר</h1>
+        <form id="videoForm">
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="imageCount" value="1" checked> יחיד
+                </label>
+                <label>
+                    <input type="radio" name="imageCount" value="2"> זוגי
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="custom-file-upload">
+                    <input type="file" id="images" name="images" accept="image/*" multiple>
+                    בחר קבצים
+                </label>
+                <span id="file-chosen">לא נבחרו קבצים</span>
+            </div>
+            <div class="form-group">
+                <select id="song" name="song" required></select>
+            </div>
+            <div class="form-group">
+                <select id="animation" name="animation" required></select>
+            </div>
+            <div class="form-group">
+                <select id="background" name="background" required></select>
+            </div>
+            <div class="form-group">
+                <label for="text">הכנס טקסט:</label>
+                <input type="text" id="text" name="text" placeholder="הכנס טקסט כאן" >
+                    <span id="text-validation" style="color: red; display: none;">הטקסט חייב להיות עד 30 תווים ובאותיות עבריות בלבד!</span>
+
+            </div>
+            <button type="submit">צור סרטון</button>
+        </form>
+        <div id="result" style="display:none;">
+            <h2>הסרטון שלך מוכן!</h2>
+            <a id="downloadLink" href="#" download>הורד סרטון</a>
+        </div>
+        <div id="loading" style="display:none;">יוצר את הסרטון, אנא המתן...</div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
