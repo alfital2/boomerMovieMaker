@@ -6,6 +6,7 @@ const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
 const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const sharp = require('sharp');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -34,7 +35,7 @@ app.get('/options', (req, res) => {
   res.json({ songs, backgrounds, animations });
 });
 
-app.post('/create-video', upload.array('images', 2), (req, res) => {
+app.post('/create-video', upload.array('images', 2), async (req, res) => {
   const { song, animation, background, text } = req.body;
   const images = req.files;
 
@@ -53,12 +54,22 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
   const outputFileName = `output_${Date.now()}.mp4`;
   const outputPath = path.join(outputDir, outputFileName);
 
+  // Compress images
+  const compressedImages = await Promise.all(images.map(async (image, index) => {
+    const compressedPath = path.join('uploads', `compressed_${index}_${path.basename(image.path)}`);
+    await sharp(image.path)
+      .resize(320, 180) // Resize to the dimensions you use in your video
+      .jpeg({ quality: 80 }) // Adjust quality as needed
+      .toFile(compressedPath);
+    return compressedPath;
+  }));
+
   let command = ffmpeg();
 
   command = command.input(path.join(__dirname, 'backgrounds', `${background}.jpg`)).loop(movieDuration);
 
-  images.forEach((image) => {
-    command = command.input(image.path).loop(user_animation_duration);
+  compressedImages.forEach((imagePath) => {
+    command = command.input(imagePath).loop(user_animation_duration);
   });
 
   command = command.input(path.join(__dirname, 'songs', `${song}.mp3`));
@@ -67,7 +78,7 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
   let filterComplex = [];
   filterComplex.push('[0:v]scale=640:360[bg]');
 
-  images.forEach((_, index) => {
+  compressedImages.forEach((_, index) => {
     const animationFilter = getAnimationFilter(animation, index);
     console.log(`Animation filter for image ${index}:`, animationFilter);
     filterComplex.push(`[${index + 1}:v]scale=320:180[img${index}]`);
@@ -77,10 +88,11 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
   // Handle Hebrew text
   const fontPath = path.join(__dirname, 'public', 'ktav.otf'); // Ensure this path is correct
   const hebrewText = text; // Ensure the text is properly encoded
+  const reversedText = hebrewText.split('').reverse().join('');
 
   let fontsize=70;
   let yoffsetText = 20;
-  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${hebrewText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=${yoffsetText}:fontcolor=red:fontsize=${fontsize}:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
+  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${reversedText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=${yoffsetText}:fontcolor=red:fontsize=${fontsize}:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
 
   const filterComplexString = filterComplex.join(';');
   console.log('Filter complex:', filterComplexString);
@@ -106,7 +118,9 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
     .on('end', () => {
       console.log('Video processing finished!');
       res.json({ videoUrl: `/outputs/${outputFileName}`, status: 'complete' });
+      // Clean up original and compressed images
       images.forEach(image => fs.unlinkSync(image.path));
+      compressedImages.forEach(imagePath => fs.unlinkSync(imagePath));
     })
     .on('error', (err) => {
       console.error('FFmpeg error:', err);
