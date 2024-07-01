@@ -77,11 +77,10 @@ app.post('/create-video', upload.array('images', 2), (req, res) => {
   // Handle Hebrew text
   const fontPath = path.join(__dirname, 'public', 'ktav.otf'); // Ensure this path is correct
   const hebrewText = text; // Ensure the text is properly encoded
-  const reversedText = hebrewText.split('').reverse().join('');
 
   let fontsize=70;
   let yoffsetText = 20;
-  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${reversedText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=${yoffsetText}:fontcolor=red:fontsize=${fontsize}:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
+  filterComplex.push(`[bg]drawtext=fontfile=${fontPath}:text='${hebrewText}':x='(w-tw)/2 + 30*sin(2*PI*t/5)':y=${yoffsetText}:fontcolor=red:fontsize=${fontsize}:shadowcolor=white:shadowx=3:shadowy=3[bg]`);
 
   const filterComplexString = filterComplex.join(';');
   console.log('Filter complex:', filterComplexString);
