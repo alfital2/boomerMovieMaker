@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const textInput = document.getElementById('text');
   const textValidation = document.getElementById('text-validation');
 
-  const backendURL = "https://boomermoviemaker-backend.onrender.com"
-  //const backendURL = "http://localhost:3000"
+  const backendURL = "https://boomermoviemaker-backend.onrender.com";
+  //const backendURL = "http://localhost:3000";
 
   textInput.addEventListener('input', () => {
     const value = textInput.value;
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Failed to load options. Please refresh the page.');
     });
 
-  form.addEventListener('submit', async (e) => {
+ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('trying to submit');
 
@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('נא לבחור תמונה');
       return;
     }
-
 
     if (textValidation.style.display === 'block') {
       alert('נא לתקן את הטעויות בטקסט לפני שליחת הטופס.');
@@ -87,12 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
       console.log('Server response:', result);
 
-      if (result.status === 'complete') {
-        console.log('Video created:', result);
-        downloadLink.href = `${backendURL}/${result.videoUrl}`
-        resultDiv.style.display = 'block';
-        console.log('Result displayed');
-      } else {
+     if (result.status === 'complete') {
+  console.log('Video created:', result);
+  downloadLink.href = `${backendURL}${result.videoUrl}`;
+  resultDiv.style.display = 'block';
+  console.log('Result displayed');
+} else {
         throw new Error('Video processing incomplete');
       }
     } catch (error) {
@@ -105,6 +104,30 @@ document.addEventListener('DOMContentLoaded', () => {
       loadingDiv.style.display = 'none'; // Hide loading message
     }
   });
+
+ downloadLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  downloadVideo(downloadLink.href);
+});
+
+ function downloadVideo(url) {
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = blobUrl;
+      a.download = 'boomer_movie.mp4';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => {
+      console.error('Download failed:', error);
+      alert('Failed to download the video. Please try again.');
+    });
+}
 
   function populateSelect(id, options) {
     const select = document.getElementById(id);
